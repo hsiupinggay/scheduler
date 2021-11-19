@@ -26,18 +26,29 @@ const whenDoneWithQuery = (error, result) => {
 
 // render form page
 export const renderForm = (request, response) => {
-  // query list of products
+  // select buyer
+  console.log(request.query);
+  const sqlQueryBuyer = 'SELECT * FROM buyers';
+  let buyerList = [];
   pool
-    .query('SELECT * FROM products')
-    .then((result) => {
-      const productList = result.rows;
-      console.log(productList);
-      response.render('input-po', { productList });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+    .query(sqlQueryBuyer, (err, result) => {
+    // [{id: , buyer_name: }]
+      buyerList = [...result.rows];
+      console.log({ buyerList });
+      if (!request.query.buyer_id) {
+        response.render('input-po', { buyerList, productList: undefined });
+      } else {
+        pool.query(`SELECT * FROM products WHERE buyer_id=${Number(request.query.buyer_id)}`, (err, result1) => {
+          if (err) {
+            console.log(err);
+          }
+          console.log('product list', result1.rows);
+          console.log('buyer list', buyerList);
+          const productList = result1.rows;
+          response.render('input-po', { buyerList, productList });
+        });
+      }
+    }); };
 
 // post request to save PO to db
 export const postPo = (request, response) => {

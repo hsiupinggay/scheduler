@@ -4,28 +4,39 @@
 </h1>
 <div class="container justify-content-center form-container">
   <div class="entry-single">
-  <form action="/input" method="POST">
+<form action="/input" method="GET">
+      <label for="buyer">Buyer:</label><br />
+      <select name="buyer_id">
+        <% buyerList.forEach(e =>{%>
+        <option value="<%=e.id%>"><%=e.buyer_name%></option>
+        <%}); %>
+      </select>
+      <input type="submit" value="Submit" />
+    </form>
+    <br />
 
-    <label for="client_po_no">Client PO No.:</label><br/>
-    <input type="integer" id="client_po_no" name="quantity"><br/>
-    
-     <label for="product">Product:</label><br />
-    <select name="product_id">
-      <% productList.forEach(e =>{%>
-      <option value="<%=e.id%>"><%=e.description%></option>
-      <%}); %>
-    </select>
-    <br/>
+<% if (productList !== undefined) { %>
+    <form action="/input" method="POST">
+      <label for="product">Product:</label><br />
+      <select name="product_id">
+        <% productList.forEach(e =>{%>
+        <option value="<%=e.id%>"><%=e.description%></option>
+        <%}); %>
+      </select><br/>
+      <label for="quantity">Quantity</label><br/>
+     <input type="integer" id="quantity" name="quantity"><br/>
 
-    <label for="shipment_date">Shipment Date:</label><br/>
-    <input type="date" id="shipment_date" name="shipment_date"/><br />
+      <label for="client_po_no">Client PO No.:</label><br/>
+     <input type="integer" id="client_po_no" name="client_po_no"><br/>
 
-    <label for="quantity">Quantity</label><br/>
-    <input type="integer" id="quantity" name="quantity">
+      <label for="shipment_date">Shipment Date:</label><br/>
+      <input type="date" id="shipment_date" name="shipment_date"/><br />
+  
 
-    <input type="submit" value="Submit" />
-     </form>
-    
+      <input type="submit" value="Submit" />
+    </form>
+    <% } %>    
+
 
    
   </div>

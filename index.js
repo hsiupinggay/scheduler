@@ -24,6 +24,8 @@ app.use(express.static('public'));
 app.get('/input', renderForm);
 
 // insert new po to db
-app.post('/input', postPo);
+app.post('/input', (req, res) => {
+  console.log(req.body);
+});
 
 app.listen(3004);
