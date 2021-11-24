@@ -149,6 +149,18 @@ export const putEditedProduct = (request, response) => {
   console.log(request.body);
   console.log(inputData);
   pool.query('UPDATE products SET description = $1, buyer_id = $2, weld_counter = $3, polish_counter = $4, weave_counter = $5 WHERE products.id = $6', inputData)
+    .then((result) => {
+      response.redirect('/submitted');
+    })
+    .catch((error) => console.log(error));
+};
+
+export const deleteProduct = (request, response) => {
+  const { id } = request.params;
+  pool.query('DELETE FROM products WHERE id = $1', [id])
+    .then((result) => {
+      response.redirect('/submitted');
+    })
     .catch((error) => console.log(error));
 };
 

@@ -17,6 +17,10 @@
       <form action="/products/<%=data[0].id%>/edit?_method=PUT">
       <input type="submit" value="Edit" />
       </form>
+      <div class="container">
+      <form action="/products/<%=data[0].id%>/delete?_method=DELETE" method="POST">
+      <input type="submit" value="Delete" />
+      </form>
       </div>
 
 

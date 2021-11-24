@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import jsSHA from 'jssha';
 import { render } from 'ejs';
 import {
+  deleteProduct,
   postPo, postProductForm, postSchedule, putEditedProduct, renderAddSchedule, renderCalendar, renderForm, renderProductEditForm, renderProductForm, renderProductList, renderSingleProduct, renderSubmission,
 } from './routes.js';
 
@@ -40,6 +41,8 @@ app.get('/products/:id', renderSingleProduct);
 app.get('/products/:id/edit', renderProductEditForm);
 // update edited info for product
 app.put('/products/:id/edit', putEditedProduct);
+// delete product entry
+app.delete('/products/:id/delete', deleteProduct);
 
 // render scheduling page
 app.get('/add-schedule', renderAddSchedule);
