@@ -18,13 +18,18 @@
 <% if (productList !== undefined) { %>
     <form action="/input" method="POST">
       <label for="product">Product:</label><br />
-      <select name="product_id">
+    
         <% productList.forEach(e =>{%>
-        <option value="<%=e.id%>"><%=e.description%></option>
+        <label for="selected products"><%=e.description%></label>
+        <input name="items" type="checkbox" value="<%=e.id%>"/>
+        <input type="number" name="<%=e.id%>"/>
+        <br/>
+        
         <%}); %>
-      </select><br/>
-      <label for="quantity">Quantity</label><br/>
-     <input type="integer" id="quantity" name="quantity"><br/>
+        
+    <br/>
+
+      
 
       <label for="client_po_no">Client PO No.:</label><br/>
      <input type="integer" id="client_po_no" name="client_po_no"><br/>

@@ -21,6 +21,7 @@
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "express": "^4.17.1",
+    "fullcalendar": "^5.10.1",
     "jssha": "^3.2.0",
     "luxon": "^2.1.1",
     "method-override": "^3.0.0",

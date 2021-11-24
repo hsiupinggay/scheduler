@@ -1,0 +1,30 @@
+<%- include('header', { title: "all products"})%>
+<h1 class="container justify-content-center form-container">
+  Product
+</h1>
+<div class="container justify-content-center form-container">
+  <div class="entry-single">
+      
+    
+      <p>Product ID: <%=data[0].id%></p>
+      <p>Description: <%=data[0].description%></p>
+      <p>Buyer: <%=data[0].buyer_name%></p>
+      <p>Weld counter: <%=data[0].weld_counter%></p>
+      <p>Polish counter: <%=data[0].polish_counter%></p>
+      <p>Weave counter: <%=data[0].weave_counter%></p>
+       
+      <div class="container">
+      <form action="/products/<%=data[0].id%>/edit?_method=PUT">
+      <input type="submit" value="Edit" />
+      </form>
+      </div>
+
+
+
+   
+  </div>
+</div>
+<%- include('footer')%>
+
+
+

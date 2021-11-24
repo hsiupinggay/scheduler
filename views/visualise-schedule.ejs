@@ -1,0 +1,23 @@
+<%- include('header', { title: "Calendar"})%>
+    <link href='fullcalendar/main.css' rel='stylesheet' />
+    <script src='fullcalendar/main.js'></script>
+    <script>
+      var imported_events = '<%-JSON.stringify(events)%>';
+      var parsed_events = JSON.parse(imported_events)
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          events: parsed_events
+        });
+        calendar.render();
+      });
+     
+
+      
+    </script>
+  </head>
+  <body>
+    <div id='calendar'></div>
+ 
+<%- include('footer')%>
