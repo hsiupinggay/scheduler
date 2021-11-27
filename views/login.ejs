@@ -1,0 +1,15 @@
+<%- include('header', { title: "login"})%> 
+    <h1 class="container justify-content-center form-container">Log in</i></h1>
+    <div class="container justify-content-center form-container">
+      <div class="entry">
+      <form action="/login" method="POST">
+        <label for="email">Email:</label>
+        <input type="email", id="email", name="email"><br>
+         <label for="password">Password:</label>
+        <input type="password", id="password", name="password">
+        <input type="submit" value="Submit" />
+      </form>
+      <p><a href="/signup">Or sign up if you don't have an account</a></p>
+      </div>
+    </div>
+   <%- include('footer')%> 

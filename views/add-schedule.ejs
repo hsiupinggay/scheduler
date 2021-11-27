@@ -29,15 +29,21 @@
 <tr>
 <!-- <th>PO. No.</th>
 <th>Shipment Date</th> -->
-<th>Description</th>
-<th>Quantity</th>
-<th>Welding</th>
-<th><label for="weld_start">Welding Starts On</label></th>
-<th>Polishing</th>
-<th><label for="polish_start">Polishing Starts On</label></th>
-<th>Weaving</th>
-<th><label for="weave_start">Weaving Starts On</label>
-</th>
+<th rowspan="2">Description</th>
+<th rowspan="2">Quantity</th>
+<th colspan="2">Welding</th>
+<th colspan="2">Polishing</th>
+<th colspan="2">Weaving</th>
+
+
+</tr>
+<tr>
+  <th>Days Estimated</th>
+  <th><label for="weld_start">Start On</label></th>
+  <th>Days Estimated</th>
+  <th><label for="polish_start">Start On</label></th>
+  <th>Days Estimated</th>
+  <th><label for="weave_start">Start On</label></th>
 </tr>
 
 <%data.forEach(e=>{%>

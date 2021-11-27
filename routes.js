@@ -12,9 +12,12 @@ const pgConnectionConfigs = {
   port: 5432,
 };
 const pool = new Pool(pgConnectionConfigs);
+export const SALT = 'aiho aiho off to the mines we go';
+
+// >>>>> po related <<<<< //
 
 // render form page for adding PO
-export const renderForm = (request, response) => {
+export const renderPoForm = (request, response) => {
   // select buyer
   console.log(request.query);
   const sqlQueryBuyer = 'SELECT * FROM buyers';
@@ -38,6 +41,36 @@ export const renderForm = (request, response) => {
         });
       }
     }); };
+
+// post po to db
+export const postPo = (request, response) => {
+  console.log(request.body);
+  console.log('items array', request.body.items);
+  const orderObj = {};
+  Object.keys(request.body).filter((key) => key !== 'items').forEach((item) => {
+    if ((request.body.items).includes(item) && !orderObj[item]) {
+      orderObj[item] = request.body[item];
+    }
+  });
+  const clientPoNo = request.body.client_po_no;
+  const shipmentDate = request.body.shipment_date;
+  console.log('order obj', orderObj);
+  console.log('client Po No. =', clientPoNo);
+  console.log('shipment date. =', shipmentDate);
+
+  Object.keys(orderObj).forEach((key) => {
+    // inputValue = [client_po_no, shipment_date, product_id, quantity]
+    const inputValue = [clientPoNo, key, shipmentDate, orderObj[key]];
+    const sqlQuery = 'INSERT INTO orders (client_po_no, product_id, shipment_date, quantity) VALUES ($1, $2, $3, $4) RETURNING *';
+    pool
+      .query(sqlQuery, inputValue)
+      .then((result) => {
+        console.table(result.rows);
+        response.redirect('/submitted');
+      }).catch((error) => console.log(error)); });
+};
+
+// >>>>> product related <<<<< //
 
 export const renderProductForm = (request, response) => {
   pool
@@ -108,7 +141,7 @@ export const renderProductList = (request, response) => {
     });
 };
 
-// render single product page
+// render individual product page
 export const renderSingleProduct = (request, response) => {
   const { id } = request.params;
   console.log(id);
@@ -121,6 +154,7 @@ export const renderSingleProduct = (request, response) => {
     });
 };
 
+// render product editable form
 export const renderProductEditForm = (request, response) => {
   console.log('render edit running');
   const { id } = request.params;
@@ -142,6 +176,7 @@ export const renderProductEditForm = (request, response) => {
     .catch((error) => { console.log(error); });
 };
 
+// update info to proudct db
 export const putEditedProduct = (request, response) => {
   const inputData = Object.values(request.body);
   const { id } = request.params;
@@ -155,45 +190,20 @@ export const putEditedProduct = (request, response) => {
     .catch((error) => console.log(error));
 };
 
+// delete individual product entry
 export const deleteProduct = (request, response) => {
-  const { id } = request.params;
-  pool.query('DELETE FROM products WHERE id = $1', [id])
-    .then((result) => {
-      response.redirect('/submitted');
-    })
-    .catch((error) => console.log(error));
-};
-
-export const postPo = (request, response) => {
-  console.log(request.body);
-  console.log('items array', request.body.items);
-  const orderObj = {};
-  Object.keys(request.body).filter((key) => key !== 'items').forEach((item) => {
-    if ((request.body.items).includes(item) && !orderObj[item]) {
-      orderObj[item] = request.body[item];
-    }
-  });
-  const clientPoNo = request.body.client_po_no;
-  const shipmentDate = request.body.shipment_date;
-  console.log('order obj', orderObj);
-  console.log('client Po No. =', clientPoNo);
-  console.log('shipment date. =', shipmentDate);
-
-  Object.keys(orderObj).forEach((key) => {
-    // inputValue = [client_po_no, shipment_date, product_id, quantity]
-    const inputValue = [clientPoNo, key, shipmentDate, orderObj[key]];
-    const sqlQuery = 'INSERT INTO orders (client_po_no, product_id, shipment_date, quantity) VALUES ($1, $2, $3, $4) RETURNING *';
-    pool
-      .query(sqlQuery, inputValue)
+  if (request.isUserLoggedIn === false) {
+    response.status(403).redirect('/login');
+  } else {
+    const { id } = request.params;
+    pool.query('DELETE FROM products WHERE id = $1', [id])
       .then((result) => {
-        console.table(result.rows);
         response.redirect('/submitted');
-      }).catch((error) => console.log(error)); });
-};
+      })
+      .catch((error) => console.log(error));
+  } };
 
-export const renderChangesPage = (request, response) => {
-  response.render('changes-received');
-};
+// >>>>> schedule related <<<<< //
 
 export const renderAddSchedule = (request, response) => {
   const sqlQueryFilterBuyer = 'SELECT * FROM buyers';
@@ -263,7 +273,8 @@ export const postSchedule = (request, response) => {
       .then((result) => {
         console.table(result.rows);
         response.redirect('/submitted');
-      });
+      })
+      .catch((error) => console.log(error));
   });
 };
 
@@ -273,9 +284,13 @@ export const renderCalendar = (request, response) => {
     .query(sqlQuery)
     .then((result) => {
       const data = result.rows;
+      console.log(data);
 
       // calculate end dates for each station schedule
       const events = [];
+      const allWeldEvents = [];
+      const allPolishEvents = [];
+      const allWeaveEvents = [];
 
       data.forEach((e) => {
         // get weld end date
@@ -303,6 +318,7 @@ export const renderCalendar = (request, response) => {
         weldEvent.end = e.weld_end;
         weldEvent.allDay = true;
         events.push(weldEvent);
+        allWeldEvents.push(weldEvent);
 
         const polishEvent = {};
         polishEvent.title = `${e.client_po_no} | ${e.description} X ${e.quantity} | polish`;
@@ -310,6 +326,7 @@ export const renderCalendar = (request, response) => {
         polishEvent.end = e.polish_end;
         polishEvent.allDay = true;
         events.push(polishEvent);
+        allPolishEvents.push(polishEvent);
 
         const weaveEvent = {};
         weaveEvent.title = `${e.client_po_no} | ${e.description} X ${e.quantity} | weave`;
@@ -317,6 +334,7 @@ export const renderCalendar = (request, response) => {
         weaveEvent.end = e.weave_end;
         weaveEvent.allDay = true;
         events.push(weaveEvent);
+        allWeaveEvents.push(weaveEvent);
       });
       console.log(events);
 
@@ -324,6 +342,135 @@ export const renderCalendar = (request, response) => {
     });
 };
 
+export const renderGanttChart = (request, response) => {
+  const sqlQuery = 'SELECT order_id, orders.client_po_no, orders.quantity, weld_start, weld_period_days, polish_start, polish_period_days, weave_start, weave_period_days, products.description   FROM schedule INNER JOIN products ON schedule.product_id = products.id INNER JOIN orders ON schedule.order_id = orders.id';
+
+  pool.query(sqlQuery)
+    .then((result) => {
+      const data = result.rows;
+      console.log(data);
+      const daysToMilliseconds = (days) => days * 24 * 60 * 60 * 1000;
+      const allWeldEvents = [];
+      const allPolishEvents = [];
+      data.forEach((e) => {
+        // Package all welding events in one array
+        const weldEvent = [];
+        // Task ID
+        weldEvent.push(e.order_id);
+        // Task Name
+        const taskNameWeld = `${e.client_po_no} | ${e.description} x ${e.quantity}`;
+        weldEvent.push(taskNameWeld);
+        // Resource
+        weldEvent.push('weld');
+        // Start Date
+        weldEvent.push(e.weld_start);
+        // End Date
+        weldEvent.push('null');
+        // Duration
+        weldEvent.push(daysToMilliseconds(e.weld_period_days));
+        // Percentage Complete
+        weldEvent.push('null');
+        // Dependencies
+        weldEvent.push('null');
+        // push weldEvent array into allWeldEvents array
+        allWeldEvents.push(weldEvent);
+
+        // Package all polishing events in one array
+        const polishEvent = [];
+        // Task ID
+        polishEvent.push(e.order_id);
+        // Task Name
+        const taskNamePolish = `${e.client_po_no} | ${e.description} x ${e.quantity}`;
+        polishEvent.push(taskNamePolish);
+        // Resource
+        polishEvent.push('polish');
+        // Start Date
+        polishEvent.push(e.polish_start);
+        // End Date
+        polishEvent.push('null');
+        // Duration
+        polishEvent.push(daysToMilliseconds(e.polish_period_days));
+        // Percentage Complete
+        polishEvent.push('null');
+        // Dependencies
+        polishEvent.push('null');
+        // push weldEvent array into allWeldEvents array
+        allPolishEvents.push(polishEvent);
+      });
+      const events = [...allWeldEvents, ...allPolishEvents];
+
+      response.render('gantt-chart');
+    });
+};
+
 export const renderSubmission = (request, response) => {
   response.render('changes');
+};
+
+// >>>>> user authentication related <<<<< //
+export const renderSignup = (request, response) => {
+  response.render('signup');
+};
+
+export const postSignup = (request, response) => {
+  // initialise the SHA object
+  const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+
+  // input the password from the request to the SHA object
+  shaObj.update(request.body.password);
+
+  // get the hashed password as output from the SHA object
+  const hashedPassword = shaObj.getHash('HEX');
+
+  // store hashed password in db
+  const inputValue = [request.body.email, hashedPassword];
+  pool
+    .query('INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *', inputValue)
+    .then((result) => {
+      console.log(result.rows);
+      response.redirect('/login'); })
+    .catch((error) => { console.log(error); });
+};
+
+export const renderLogin = (request, response) => {
+  response.render('login');
+};
+
+export const postLogin = (request, response) => {
+  pool
+    .query('SELECT * FROM users WHERE email = $1', [request.body.email])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        response.status(403).send('login failed');
+      }
+
+      // hash password
+      const shaObjPassword = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+      shaObjPassword.update(request.body.password);
+      const hashedInputPassword = shaObjPassword.getHash('HEX');
+      const dbPassword = result.rows[0].password;
+      console.log(hashedInputPassword === dbPassword);
+      if (hashedInputPassword !== dbPassword) {
+        response.status(403).send('login failed');
+        return;
+      }
+
+      // hash + salt cookie string
+      const unhashedCookieString = `${request.body.email}-${SALT}`;
+      console.log(unhashedCookieString);
+
+      const shaObjCookie = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+      shaObjCookie.update(unhashedCookieString);
+      const hashedCookieString = shaObjCookie.getHash('HEX');
+
+      response.cookie('loggedInHash', hashedCookieString);
+      response.cookie('userId', result.rows[0].email);
+      response.redirect('/submitted');
+    });
+};
+
+export const logout = (request, response) => {
+  response.clearCookie('loggedInHash');
+  response.clearCookie('userId');
+  response.render('logout');
 };

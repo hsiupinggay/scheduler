@@ -1,0 +1,14 @@
+<%- include('header', { title: "signup"})%> 
+    <h1 class="container justify-content-center form-container">Sign Up</i></h1>
+    <div class="container justify-content-center form-container">
+      <div class="entry-single">
+      <form action="/signup" method="POST">
+        <label for="email">Email:</label>
+        <input type="email", id="email", name="email"><br>
+         <label for="password">Password:</label>
+        <input type="password", id="password", name="password">
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+    </div>
+   <%- include('footer')%> 
