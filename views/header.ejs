@@ -7,7 +7,7 @@
     <title><%= title %></title>
   
     <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/b2b5b47de4.js" crossorigin="anonymous"></script>
+   <script src="https://kit.fontawesome.com/daeece93d3.js" crossorigin="anonymous"></script>
 
     <link
       rel="stylesheet"
@@ -31,8 +31,8 @@
       rel="stylesheet"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Meddon&display=swap" rel="stylesheet">    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Meddon&display=swap" rel="stylesheet">    
 
   </head>
   <body>
@@ -54,18 +54,29 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="/input">Add PO</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/input-product">Add Product</a>
-            </li>
-              <li class="nav-item">
-              <a class="nav-link" href="/add-schedule">Add Schedule</a>
-            </li>
             
             <li class="nav-item">
-              <a class="nav-link" href="/schedule">Calendar</a>
+              <a class="nav-link" href="/input">Orders</a>
+            
+            <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownView" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Schedule
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownView">
+          <a class="dropdown-item" href="/add-schedule"><i class="far fa-calendar-plus"></i> Add</a>
+          <a class="dropdown-item" href="/schedule"><i class="far fa-calendar-alt"></i> Calendar</a>
+          <a class="dropdown-item" href="/gantt"><i class="fas fa-align-left"></i> Gantt</a>
+      
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Products
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="/input-product">Add</a>
+          <a class="dropdown-item" href="/products">Query</a>
+        </div>
             </li>
           </ul>
         </div>

@@ -1,52 +1,78 @@
 <%- include('header', { title: "input po"})%>
-<h1 class="container justify-content-center form-container">
-  Input PO
-</h1>
-<div class="container justify-content-center form-container">
-  <div class="entry-single">
-<form action="/input" method="GET">
-      <label for="buyer">Buyer:</label><br />
-      <select name="buyer_id">
-        <% buyerList.forEach(e =>{%>
-        <option value="<%=e.id%>"><%=e.buyer_name%></option>
-        <%}); %>
-      </select>
-      <input type="submit" value="Submit" />
-    </form>
-    <br />
 
-<% if (productList !== undefined) { %>
-    <form action="/input" method="POST">
-      <label for="product">Product:</label><br />
+<div class="container">
+  <div class="container justify-content-center form-container">
+    <div class="container"><h1>Input PO</h1></div>
+    <div class="container head-info-container">
+      <form action="/input" method="GET">
+        <label for="buyer">Buyer:</label><br />
+        <select name="buyer_id">
+          <% buyerList.forEach(e =>{%>
+          <option value="<%=e.id%>"><%=e.buyer_name%></option>
+          <%}); %>
+        </select>
+        <input type="submit" value="GO" />
+      </form>
+    </div>
     
-        <% productList.forEach(e =>{%>
-        <label for="selected products"><%=e.description%></label>
-        <input name="items" type="checkbox" value="<%=e.id%>"/>
-        <input type="number" name="<%=e.id%>"/>
-        <br/>
-        
-        <%}); %>
-        
-    <br/>
+    <% if (productList !== undefined) { %>
+      <div class="container head-info-container">
+      <form action="/input" method="POST">
+        <label for="client_po_no">Client PO No.:</label><br />
+        <input
+          class="po-input-container"
+          type="text"
+          id="client_po_no"
+          name="client_po_no"
+          value="e.g. SC 100-10234567"
+        />
 
-      
+        <div><br /></div>
 
-      <label for="client_po_no">Client PO No.:</label><br/>
-     <input type="integer" id="client_po_no" name="client_po_no"><br/>
+        <label for="shipment_date">Shipment Date:</label><br />
+        <input
+          class="po-input-container"
+          type="date"
+          id="shipment_date"
+          name="shipment_date"
+        />
+        </div>
 
-      <label for="shipment_date">Shipment Date:</label><br/>
-      <input type="date" id="shipment_date" name="shipment_date"/><br />
-  
+        <div class="container head-info-container">
+          <label for="table">Products</label>
+          <table>
+            <tr>
+              <th>Description</th>
+              <th>✔️</th>
+              <th>Qty</th>
+            </tr>
+            <% productList.forEach(e =>{%>
+            <tr>
+              <td>
+                <label for="selected products"><%=e.description%></label>
+              </td>
+              <td>
+                <input name="items" type="checkbox" value="<%=e.id%>" />
+              </td>
+              <td>
+                <input
+                  class="product-qty-input"
+                  type="number"
+                  name="<%=e.id%>"
+                />
+                <%}); %>
+              </td>
+            </tr>
+          </table>
+        </div>
 
-      <input type="submit" value="Submit" />
-    </form>
-    <% } %>    
+        <div class="d-flex justify-content-center">
+          <input class="button240" type="submit" value="GO" />
+        </div>
 
-
-   
+        <% } %>
+      </form>
+    
   </div>
+  <%- include('footer')%>
 </div>
-<%- include('footer')%>
-
-
-

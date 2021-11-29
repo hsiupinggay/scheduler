@@ -207,6 +207,7 @@ export const deleteProduct = (request, response) => {
 
 export const renderAddSchedule = (request, response) => {
   const sqlQueryFilterBuyer = 'SELECT * FROM buyers';
+  // initialising variables for multiple filters
   let buyerList = [];
   let poList = [];
   let data;
@@ -238,6 +239,11 @@ export const renderAddSchedule = (request, response) => {
                 .query(sqlQuery)
                 .then((result3) => {
                   data = result3.rows;
+                  // changing date format of shipment date in each object in data
+                  data.forEach((e) => {
+                    e.shipment_date = DateTime.fromJSDate(e.shipment_date).toLocaleString(DateTime.DATE_MED);
+                  });
+
                   console.log('data');
                   console.log(data);
                   response.render('add-schedule', { buyerList, poList, data });
@@ -251,10 +257,23 @@ export const renderAddSchedule = (request, response) => {
 export const postSchedule = (request, response) => {
   console.log(request.body);
   const data = request.body;
+
+  const sqlQueryOrderOverview = 'INSERT INTO orders_overview (client_po_no, shipment_date, production_start, production_end) VALUES ($1, $2, $3, $4) RETURNING *';
+  const shipmentDate = new Date(data.shipment_date);
+
+  const orderOverviewInput = [data.client_po_no, shipmentDate, data.production_start, data.production_end];
+
   // repackaging data from request.body so that it's easy to input
   const newData = [];
   const keysArray = Object.keys(data);
   const valuesArray = Object.values(data);
+  // remove first 4 keys and values, as these are data to be inserted into orders_overview table
+  // first four keys have corresponding values that are not arrays, and will affect repackaging of array values that need to be added to orders table
+  keysArray.splice(0, 4);
+  console.log(keysArray);
+  valuesArray.splice(0, 4);
+  console.log(valuesArray);
+
   // this loop is what I'm proudest of in this whole project
   for (let i = 0; i < valuesArray[0].length; i += 1) {
     const newObj = {};
@@ -264,82 +283,46 @@ export const postSchedule = (request, response) => {
     newData.push(newObj);
   }
   console.log(newData);
-
-  newData.forEach((obj) => {
-    const inputData = [obj.order_id, obj.product_id, obj.weld_start, obj.weld_period_days, obj.polish_start, obj.polish_period_days, obj.weave_start, obj.weave_period_days];
-    const sqlQuery = 'INSERT INTO schedule (order_id, product_id, weld_start, weld_period_days, polish_start, polish_period_days, weave_start, weave_period_days) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
-    pool
-      .query(sqlQuery, inputData)
-      .then((result) => {
-        console.table(result.rows);
-        response.redirect('/submitted');
-      })
-      .catch((error) => console.log(error));
-  });
+  pool
+    .query(sqlQueryOrderOverview, orderOverviewInput)
+    .then((result1) => {
+      console.log(result1.rows);
+      newData.forEach((obj) => {
+        const inputData = [obj.order_id, obj.product_id, obj.weld_start, obj.weld_period_days, obj.polish_start, obj.polish_period_days, obj.weave_start, obj.weave_period_days];
+        const sqlQuery = 'INSERT INTO schedule (order_id, product_id, weld_start, weld_period_days, polish_start, polish_period_days, weave_start, weave_period_days) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
+        pool
+          .query(sqlQuery, inputData)
+          .then((result2) => {
+            console.table(result2.rows);
+            response.redirect('/submitted');
+          })
+          .catch((error) => console.log(error));
+      });
+    });
 };
 
 export const renderCalendar = (request, response) => {
-  const sqlQuery = 'SELECT order_id, orders.client_po_no, orders.quantity, weld_start, weld_period_days, polish_start, polish_period_days, weave_start, weave_period_days, products.description   FROM schedule INNER JOIN products ON schedule.product_id = products.id INNER JOIN orders ON schedule.order_id = orders.id';
-  pool
-    .query(sqlQuery)
+  pool.query('SELECT * FROM orders_overview')
     .then((result) => {
       const data = result.rows;
-      console.log(data);
-
-      // calculate end dates for each station schedule
       const events = [];
-      const allWeldEvents = [];
-      const allPolishEvents = [];
-      const allWeaveEvents = [];
-
       data.forEach((e) => {
-        // get weld end date
-        const weldStart = new Date(e.weld_start);
-        weldStart.setDate(weldStart.getDate() + Number(e.weld_period_days));
-        // add weld end date to data
-        e.weld_end = weldStart;
+        const event = {};
+        let shipmentDate = e.shipment_date;
 
-        // get polish end date
-        const polishStart = new Date(e.polish_start);
-        polishStart.setDate(polishStart.getDate() + Number(e.polish_period_days));
-        // add polish end date to data
-        e.polish_end = polishStart;
+        console.log(e.shipment_date);
+        shipmentDate = DateTime.fromJSDate(shipmentDate).toLocaleString(DateTime.DATE_MED);
+        console.log(shipmentDate);
 
-        // get weave end date
-        const weaveStart = new Date(e.weave_start);
-        weaveStart.setDate(weaveStart.getDate() + Number(e.weave_period_days));
-        // add weave end date to data
-        e.weave_end = weaveStart;
-
-        // package event
-        const weldEvent = {};
-        weldEvent.title = `${e.client_po_no} | ${e.description} X ${e.quantity} | weld`;
-        weldEvent.start = e.weld_start;
-        weldEvent.end = e.weld_end;
-        weldEvent.allDay = true;
-        events.push(weldEvent);
-        allWeldEvents.push(weldEvent);
-
-        const polishEvent = {};
-        polishEvent.title = `${e.client_po_no} | ${e.description} X ${e.quantity} | polish`;
-        polishEvent.start = e.polish_start;
-        polishEvent.end = e.polish_end;
-        polishEvent.allDay = true;
-        events.push(polishEvent);
-        allPolishEvents.push(polishEvent);
-
-        const weaveEvent = {};
-        weaveEvent.title = `${e.client_po_no} | ${e.description} X ${e.quantity} | weave`;
-        weaveEvent.start = e.weave_start;
-        weaveEvent.end = e.weave_end;
-        weaveEvent.allDay = true;
-        events.push(weaveEvent);
-        allWeaveEvents.push(weaveEvent);
+        event.title = `${e.client_po_no} | Due ⏰ ${shipmentDate}`;
+        event.start = e.production_start;
+        event.end = e.production_end;
+        event.allDay = true;
+        events.push(event);
       });
-      console.log(events);
-
-      response.render('visualise-schedule', { data, events });
-    });
+      response.render('calendar', { events });
+    })
+    .catch((error) => console.log(error));
 };
 
 export const renderGanttChart = (request, response) => {
@@ -352,54 +335,82 @@ export const renderGanttChart = (request, response) => {
       const daysToMilliseconds = (days) => days * 24 * 60 * 60 * 1000;
       const allWeldEvents = [];
       const allPolishEvents = [];
+      const allWeaveEvents = [];
+
       data.forEach((e) => {
         // Package all welding events in one array
         const weldEvent = [];
         // Task ID
-        weldEvent.push(e.order_id);
+        weldEvent.push(`${e.order_id}_weld`);
         // Task Name
         const taskNameWeld = `${e.client_po_no} | ${e.description} x ${e.quantity}`;
         weldEvent.push(taskNameWeld);
         // Resource
         weldEvent.push('weld');
         // Start Date
+        // const date1 = DateTime.toISODate(e.weld_start);
         weldEvent.push(e.weld_start);
         // End Date
-        weldEvent.push('null');
+        weldEvent.push(null);
         // Duration
+
         weldEvent.push(daysToMilliseconds(e.weld_period_days));
         // Percentage Complete
-        weldEvent.push('null');
+        weldEvent.push(null);
         // Dependencies
-        weldEvent.push('null');
+        weldEvent.push(null);
         // push weldEvent array into allWeldEvents array
         allWeldEvents.push(weldEvent);
 
         // Package all polishing events in one array
         const polishEvent = [];
         // Task ID
-        polishEvent.push(e.order_id);
+        polishEvent.push(`${e.order_id}_polish`);
         // Task Name
         const taskNamePolish = `${e.client_po_no} | ${e.description} x ${e.quantity}`;
         polishEvent.push(taskNamePolish);
         // Resource
         polishEvent.push('polish');
         // Start Date
+
         polishEvent.push(e.polish_start);
         // End Date
-        polishEvent.push('null');
+        polishEvent.push(null);
         // Duration
         polishEvent.push(daysToMilliseconds(e.polish_period_days));
         // Percentage Complete
-        polishEvent.push('null');
+        polishEvent.push(null);
         // Dependencies
-        polishEvent.push('null');
+        polishEvent.push(null);
         // push weldEvent array into allWeldEvents array
         allPolishEvents.push(polishEvent);
-      });
-      const events = [...allWeldEvents, ...allPolishEvents];
 
-      response.render('gantt-chart');
+        // Package all polishing events in one array
+        const weaveEvent = [];
+        // Task ID
+        weaveEvent.push(`${e.order_id}_weave`);
+        // Task Name
+        const taskNameWeave = `${e.client_po_no} | ${e.description} x ${e.quantity}`;
+        weaveEvent.push(taskNameWeave);
+        // Resource
+        weaveEvent.push('weave');
+        // Start Date
+        weaveEvent.push(e.weave_start);
+        // End Date
+        weaveEvent.push(null);
+        // Duration
+        weaveEvent.push(daysToMilliseconds(e.weave_period_days));
+        // Percentage Complete
+        weaveEvent.push(null);
+        // Dependencies
+        weaveEvent.push(null);
+        // push weaveEvent array into allWeldEvents array
+        allWeaveEvents.push(weaveEvent);
+      });
+      const events = [...allWeldEvents, ...allPolishEvents, ...allWeaveEvents];
+      // console.log(events);
+
+      response.render('gantt-chart', { events });
     });
 };
 

@@ -1,40 +1,55 @@
 <%- include('header', { title: "input products"})%>
-<h1 class="container justify-content-center form-container">
-  Add Product
-</h1>
-<div class="container justify-content-center form-container">
-  <div class="entry-single">
-<form action="/input-product" method="POST">
-      
-      <label for="description">Description:</label><br/>
-     <input type="text" id="description" name="description"><br/>
+<div class="container justify-content-center">
+  <div class="container justify-content-center">
+    <h1>Add Product</h1>
+  </div>
+  <div class="container justify-content-center head-info-container">
+    <form action="/input-product" method="POST">
+      <label for="description">Description:</label><br />
+      <input
+        type="text"
+        id="description"
+        name="description"
+        value="e.g. marty lounge chair"
+      />
 
-     <label for="buyer">Buyer:</label><br />
-     <select name="buyer_id">
-       <% buyerList.forEach(e=>{%>
-         <option value="<%=e.id%>"><%=e.buyer_name%></option>
-       <%})%>
-     </select>
-      <br/>
+      <div><br /></div>
 
-      <label for="weld_counter">Weld Counter:</label><br/>
-      <input type="integer" id="weld_counter" name="weld_counter"/><br />
+      <label for="buyer">Buyer:</label><br />
+      <select name="buyer_id">
+        <% buyerList.forEach(e=>{%>
+        <option value="<%=e.id%>"><%=e.buyer_name%></option>
+        <%})%>
+      </select>
+      <div><br /></div>
 
-       <label for="polish_counter">Polish Counter:</label><br/>
-      <input type="integer" id="polish_counter" name="polish_counter"/><br />
+      <label for="weld_counter">Weld Counter</label><br />
+      <input
+        type="integer"
+        id="weld_counter"
+        name="weld_counter"
+        value="e.g. 0.1"
+      /><br />
 
-       <label for="weave_counter">Weave Counter:</label><br/>
-      <input type="integer" id="weave_counter" name="weave_counter"/><br />
-  
+      <label for="polish_counter">Polish Counter</label><br />
+      <input
+        type="integer"
+        id="polish_counter"
+        name="polish_counter"
+        value="e.g. 0.1"
+      /><br />
 
-      <input type="submit" value="Submit" />
-    </form> 
+      <label for="weave_counter">Weave Counter</label><br />
+      <input
+        type="integer"
+        id="weave_counter"
+        name="weave_counter"
+        value="e.g. 0.1"
+      />
+      <div><br /></div>
 
-
-   
+      <input class="button240" type="submit" value="GO" />
+    </form>
   </div>
 </div>
 <%- include('footer')%>
-
-
-

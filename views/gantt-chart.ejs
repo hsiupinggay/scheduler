@@ -1,15 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+<%- include('header', { title: "gantt"})%> 
 
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script type="text/javascript">
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart);
+    const eventsData = <%-JSON.stringify(events)%>
+    console.log(eventsData)
+    eventsData.forEach(e =>{
+      e[3] = new Date(e[3]);
+    })
 
     function daysToMilliseconds(days) {
       return days * 24 * 60 * 60 * 1000;
@@ -27,30 +26,19 @@
       data.addColumn('number', 'Percent Complete');
       data.addColumn('string', 'Dependencies');
 
-      data.addRows([
-        ['Research', 'Find sources', null,
-         new Date(2015, 0, 1), new Date(2015, 0, 5), null,  100,  null],
-        ['Write', 'Write paper', 'write',
-         null, new Date(2015, 0, 9), daysToMilliseconds(3), 25, 'Research,Outline'],
-        ['Cite', 'Create bibliography', 'write',
-         null, new Date(2015, 0, 7), daysToMilliseconds(1), 20, 'Research'],
-        ['Complete', 'Hand in paper', 'complete',
-         null, new Date(2015, 0, 10), daysToMilliseconds(1), 0, 'Cite,Write'],
-        ['Outline', 'Outline paper', 'write',
-         null, new Date(2015, 0, 6), daysToMilliseconds(1), 100, 'Research']
-      ]);
+      data.addRows(eventsData);
 
       var options = {
-        height: 275
-      };
+        height: 1000
+        }
+      
 
       var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
 
       chart.draw(data, options);
     }
   </script>
-</head>
-<body>
+
+
   <div id="chart_div"></div>
-</body>
-</html>
+   <%- include('footer')%> 

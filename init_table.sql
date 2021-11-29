@@ -11,11 +11,18 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE TABLE IF NOT EXISTS orders (
   id SERIAL PRIMARY KEY,
   client_po_no TEXT,
-  shipment_date DATE,
+  shipment_date DATE, 
   product_id INTEGER,
   quantity INTEGER,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS orders_overview (
+  id SERIAL PRIMARY KEY,
+  client_po_no TEXT,
+  shipment_date DATE, 
+  production_start DATE, 
+  production_end DATE);
 
 CREATE TABLE IF NOT EXISTS schedule (
   id SERIAL PRIMARY KEY,

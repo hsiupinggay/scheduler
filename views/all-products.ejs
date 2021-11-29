@@ -1,30 +1,31 @@
 <%- include('header', { title: "all products"})%>
-<h1 class="container justify-content-center form-container">
-  Edit Product
-</h1>
-<div class="container justify-content-center form-container">
-  <div class="entry-single">
-<form action="/products" method="GET">
- <label for="buyer">Buyer:</label><br />
+<div class="container justify-content-center">
+  <div class="container">
+    <h1>Product Library</h1>
+  </div>
+
+  <div class="container head-info-container">
+    <form action="/products" method="GET">
+      <label for="buyer">Buyer</label><br />
       <select name="buyer_id">
         <% buyerList.forEach(e =>{%>
         <option value="<%=e.id%>"><%=e.buyer_name%></option>
         <%}); %>
-      </select> 
-      <input type="submit" value="Submit" />
-
-       <div class="container">
-     <%allProducts.forEach(product=>{%> 
-      <a href="/products/<%=product.id%>"> 
-      <p>ID: <%=product.id%></p>
-      <p>Description: <%=product.description%></p>
-      <%})%>
-      </div></a>
-
-   
+      </select>
+      <input type="submit" value="GO" />
+    </form>
   </div>
+
+  <%allProducts.forEach(product=>{%>
+  <a href="/products/<%=product.id%>">
+    <div class="container head-info-container">
+      <label class="product-id" for="product_id">ID <%=product.id%></label>
+      <br />
+      <label for="description">Description</label><br />
+      <p><%=product.description%></p>
+    </div></a
+  >
+  <%})%>
 </div>
+
 <%- include('footer')%>
-
-
-
