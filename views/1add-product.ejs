@@ -20,10 +20,11 @@
             <label class="subheader" for="buyer">Buyer</label><br />
             <select name="buyer_id">
               <% buyerList.forEach(e=>{%>
-              <option value="<%=e.id%>" id="<%=e.id%>">
-                <%=e.buyer_name%>
-              </option>
+              <option value="<%=e.id%>"><%=e.buyer_name%></option>
               <%})%>
+              <option value="none" selected disabled hidden>
+                Select Buyer
+              </option>
             </select>
           </div>
           <div class="col-md-6 col-sm-12">

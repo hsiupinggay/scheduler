@@ -3,7 +3,8 @@ body {
 }
 
 table {
-  font-family: arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   border-collapse: collapse;
   width: 100%;
 }
@@ -13,38 +14,51 @@ th {
   /* border: 1px solid #dddddd; */
   text-align: left;
   padding: 8px;
+  font-size: 14px;
 }
+/* td {
+  font-weight: normal;
+} */
 
 tr:nth-child(even) {
   background-color: #ffffff;
 }
 
 .product-qty-input {
-  width: 100px;
+  width: 80px;
+  border: none;
+  border-bottom: 1px solid rgb(23, 81, 206);
+}
+
+.schedule-table-date-input {
+  width: 130px !important;
 }
 
 .container {
   max-width: 600px;
 }
 
-select {
+/* select {
   height: 30px;
   padding: 2px;
   width: 199px;
   background-color: transparent;
-  /* border-radius: 10px; */
+  border-radius: 10px;
   border: none;
   border-bottom: 1px solid rgb(175, 175, 175);
-}
+} */
 
 input[type="date"],
 input[type="text"],
-input[type="integer"] {
+input[type="integer"],
+input[type="email"],
+input[type="password"],
+select {
   height: 30px;
   padding: 2px;
-  width: 199px;
   background-color: transparent;
   /* border-radius: 10px; */
+  width: 198px;
   border: none;
   border-bottom: 1px solid rgb(23, 81, 206);
 }
@@ -55,11 +69,16 @@ input[type="submit"] {
   border-radius: 10px;
   color: white;
   height: 30px;
-  margin-left: 2px;
+  /* margin-left: 2px; */
+}
+button {
+  border: none;
+  color: rgb(23, 81, 206);
+  background-color: transparent;
 }
 
 .button240 {
-  width: 240px;
+  width: 100%;
   border-radius: 10px;
 }
 
@@ -68,8 +87,7 @@ input[type="submit"] {
   background-color: rgb(255, 255, 255);
   padding-bottom: 10px;
   padding-top: 10px;
-  max-width: 275px;
-  margin-left: 12px;
+  /* max-width: 275px; */
   margin-bottom: 10px;
 }
 
@@ -79,8 +97,8 @@ th {
   color: rgb(80, 80, 80);
 }
 
-label {
-  border-bottom: rgb(175, 175, 175) solid 1px;
+.subheader {
+  font-weight: bolder;
 }
 
 table {
@@ -101,7 +119,8 @@ text {
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
 }
 
-.scroll-table {
+.scroll-table,
+#chart_div {
   overflow-x: auto;
 }
 
@@ -111,4 +130,8 @@ label,
 input,
 select {
   font-size: 14px;
+}
+
+.divider {
+  height: 2px;
 }

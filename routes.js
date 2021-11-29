@@ -18,29 +18,32 @@ export const SALT = 'aiho aiho off to the mines we go';
 
 // render form page for adding PO
 export const renderPoForm = (request, response) => {
+  if (request.isUserLoggedIn === false) {
+    response.status(403).redirect('/login');
+  } else {
   // select buyer
-  console.log(request.query);
-  const sqlQueryBuyer = 'SELECT * FROM buyers';
-  let buyerList = [];
-  pool
-    .query(sqlQueryBuyer, (err, result) => {
-    // [{id: , buyer_name: }]
-      buyerList = [...result.rows];
-      console.log({ buyerList });
-      if (!request.query.buyer_id) {
-        response.render('input-po', { buyerList, productList: undefined });
-      } else {
-        pool.query(`SELECT * FROM products WHERE buyer_id=${Number(request.query.buyer_id)}`, (err, result1) => {
-          if (err) {
-            console.log(err);
-          }
-          console.log('product list', result1.rows);
-          console.log('buyer list', buyerList);
-          const productList = result1.rows;
-          response.render('input-po', { buyerList, productList });
-        });
-      }
-    }); };
+    console.log(request.query);
+    const sqlQueryBuyer = 'SELECT * FROM buyers';
+    let buyerList = [];
+    pool
+      .query(sqlQueryBuyer, (err, result) => {
+        // [{id: , buyer_name: }]
+        buyerList = [...result.rows];
+        console.log({ buyerList });
+        if (!request.query.buyer_id) {
+          response.render('input-po', { buyerList, productList: undefined });
+        } else {
+          pool.query(`SELECT * FROM products WHERE buyer_id=${Number(request.query.buyer_id)}`, (err, result1) => {
+            if (err) {
+              console.log(err);
+            }
+            console.log('product list', result1.rows);
+            console.log('buyer list', buyerList);
+            const productList = result1.rows;
+            response.render('input-po', { buyerList, productList });
+          });
+        }
+      }); } };
 
 // post po to db
 export const postPo = (request, response) => {
@@ -73,14 +76,17 @@ export const postPo = (request, response) => {
 // >>>>> product related <<<<< //
 
 export const renderProductForm = (request, response) => {
-  pool
-    .query('SELECT * FROM buyers')
-    .then((result) => {
-      const buyerList = result.rows;
-      console.log(result.rows);
-      response.render('input-product', { buyerList });
-    });
-};
+  if (request.isUserLoggedIn === false) {
+    response.status(403).redirect('/login');
+  } else {
+    pool
+      .query('SELECT * FROM buyers')
+      .then((result) => {
+        const buyerList = result.rows;
+        console.log(result.rows);
+        response.render('input-product', { buyerList });
+      });
+  } };
 
 export const postProductForm = (request, response) => {
   // validate input to prevent duplicates
@@ -130,7 +136,7 @@ export const renderProductList = (request, response) => {
         const inputValue = [Number(request.query.buyer_id)];
         console.log(inputValue);
         pool
-          .query('SELECT products.id, description, weld_counter, polish_counter, weave_counter, buyers.buyer_name FROM products INNER JOIN buyers ON products.buyer_id = buyers.id WHERE products.buyer_id = $1 ORDER BY description ASC', inputValue)
+          .query('SELECT products.id, description, weld_counter, polish_counter, weave_counter, buyers.buyer_name, buyer_id FROM products INNER JOIN buyers ON products.buyer_id = buyers.id WHERE products.buyer_id = $1 ORDER BY description ASC', inputValue)
           .then((result) => {
             const allProducts = result.rows;
             console.log(result.rows);
@@ -156,25 +162,28 @@ export const renderSingleProduct = (request, response) => {
 
 // render product editable form
 export const renderProductEditForm = (request, response) => {
-  console.log('render edit running');
-  const { id } = request.params;
-  console.log(id);
+  if (request.isUserLoggedIn === false) {
+    response.status(403).redirect('/login');
+  } else {
+    console.log('render edit running');
+    const { id } = request.params;
+    console.log(id);
 
-  pool
-    .query('SELECT * FROM buyers')
-    .then((result1) => {
-      const buyerList = result1.rows;
-      // console.log(buyerList);
-      pool
-        .query('SELECT products.id, description, buyer_id, buyers.buyer_name, weld_counter, polish_counter, weave_counter FROM products INNER JOIN buyers ON buyers.id = buyer_id WHERE products.id = $1', [id])
-        .then((result2) => {
-          const product = result2.rows;
-          console.log(product);
-          response.render('edit-product', { product, buyerList });
-        });
-    })
-    .catch((error) => { console.log(error); });
-};
+    pool
+      .query('SELECT * FROM buyers')
+      .then((result1) => {
+        const buyerList = result1.rows;
+        // console.log(buyerList);
+        pool
+          .query('SELECT products.id, description, buyer_id, buyers.buyer_name, weld_counter, polish_counter, weave_counter FROM products INNER JOIN buyers ON buyers.id = buyer_id WHERE products.id = $1', [id])
+          .then((result2) => {
+            const product = result2.rows;
+            console.log(product);
+            response.render('edit-product', { product, buyerList });
+          });
+      })
+      .catch((error) => { console.log(error); });
+  } };
 
 // update info to proudct db
 export const putEditedProduct = (request, response) => {
@@ -206,53 +215,56 @@ export const deleteProduct = (request, response) => {
 // >>>>> schedule related <<<<< //
 
 export const renderAddSchedule = (request, response) => {
-  const sqlQueryFilterBuyer = 'SELECT * FROM buyers';
-  // initialising variables for multiple filters
-  let buyerList = [];
-  let poList = [];
-  let data;
-  pool
-    .query(sqlQueryFilterBuyer, (err1, result1) => {
-      if (err1) {
-        console.log(err1);
-        return;
-      }
-      buyerList = [...result1.rows];
-      if (!request.query.buyer_id) {
-        response.render('add-schedule', { buyerList, poList: undefined, data: undefined });
-      } else {
-        pool.query(`SELECT client_po_no FROM orders INNER JOIN products ON orders.product_id = products.id INNER JOIN buyers ON products.buyer_id = buyers.id WHERE products.buyer_id=${Number(request.query.buyer_id)}`)
-          .then((result2) => {
-            poList = [...new Set(result2.rows.map(JSON.stringify))].map(JSON.parse);
-            console.log('new po list');
-            console.log(poList);
-            // console.log(poList);
-            // console.log(request.query);
-            if (!request.query.client_po_no) {
-              response.render('add-schedule', { buyerList, poList, data: undefined });
-            } else {
-              console.log('final sql query running');
-              console.log(request.query.client_po_no);
-              // console.log(request.query.client_po_no);
-              const sqlQuery = `SELECT orders.id AS order_id, client_po_no, shipment_date, quantity, description, products.id AS product_id, weld_counter, polish_counter, weave_counter, buyer_name FROM orders INNER JOIN products ON orders.product_id = products.id INNER JOIN buyers ON buyers.id = products.buyer_id WHERE client_po_no = '${request.query.client_po_no}'`;
-              pool
-                .query(sqlQuery)
-                .then((result3) => {
-                  data = result3.rows;
-                  // changing date format of shipment date in each object in data
-                  data.forEach((e) => {
-                    e.shipment_date = DateTime.fromJSDate(e.shipment_date).toLocaleString(DateTime.DATE_MED);
-                  });
+  if (request.isUserLoggedIn === false) {
+    response.status(403).redirect('/login');
+  } else {
+    const sqlQueryFilterBuyer = 'SELECT * FROM buyers';
+    // initialising variables for multiple filters
+    let buyerList = [];
+    let poList = [];
+    let data;
+    pool
+      .query(sqlQueryFilterBuyer, (err1, result1) => {
+        if (err1) {
+          console.log(err1);
+          return;
+        }
+        buyerList = [...result1.rows];
+        if (!request.query.buyer_id) {
+          response.render('add-schedule', { buyerList, poList: undefined, data: undefined });
+        } else {
+          pool.query(`SELECT client_po_no, buyer_id FROM orders INNER JOIN products ON orders.product_id = products.id INNER JOIN buyers ON products.buyer_id = buyers.id WHERE products.buyer_id=${Number(request.query.buyer_id)}`)
+            .then((result2) => {
+              poList = [...new Set(result2.rows.map(JSON.stringify))].map(JSON.parse);
+              console.log('new po list');
+              console.log(poList);
+              // console.log(poList);
+              // console.log(request.query);
+              if (!request.query.client_po_no) {
+                response.render('add-schedule', { buyerList, poList, data: undefined });
+              } else {
+                console.log('final sql query running');
+                console.log(request.query.client_po_no);
+                // console.log(request.query.client_po_no);
+                const sqlQuery = `SELECT orders.id AS order_id, client_po_no, shipment_date, quantity, description, products.id AS product_id, weld_counter, polish_counter, weave_counter, buyer_name FROM orders INNER JOIN products ON orders.product_id = products.id INNER JOIN buyers ON buyers.id = products.buyer_id WHERE client_po_no = '${request.query.client_po_no}'`;
+                pool
+                  .query(sqlQuery)
+                  .then((result3) => {
+                    data = result3.rows;
+                    // changing date format of shipment date in each object in data
+                    data.forEach((e) => {
+                      e.shipment_date = DateTime.fromJSDate(e.shipment_date).toLocaleString(DateTime.DATE_MED);
+                    });
 
-                  console.log('data');
-                  console.log(data);
-                  response.render('add-schedule', { buyerList, poList, data });
-                })
-                .catch((err2) => { console.log(err2); });
-            }
-          });
-      }
-    }); };
+                    console.log('data');
+                    console.log(data);
+                    response.render('add-schedule', { buyerList, poList, data });
+                  })
+                  .catch((err2) => { console.log(err2); });
+              }
+            });
+        }
+      }); } };
 
 export const postSchedule = (request, response) => {
   console.log(request.body);

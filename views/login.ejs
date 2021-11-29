@@ -1,15 +1,39 @@
 <%- include('header', { title: "login"})%> 
-    <h1 class="container justify-content-center form-container">Log in</i></h1>
-    <div class="container justify-content-center form-container">
+<div class="container justify-content-center">
+
+  <div><h1>Log in</i></h1></div>
+    <div class="container head-info-container">
       <div class="entry">
       <form action="/login" method="POST">
-        <label for="email">Email:</label>
-        <input type="email", id="email", name="email"><br>
-         <label for="password">Password:</label>
-        <input type="password", id="password", name="password">
-        <input type="submit" value="Submit" />
-      </form>
-      <p><a href="/signup">Or sign up if you don't have an account</a></p>
+        <label class="subheader" for="email">Email</label>
+        <br/>
+        <input type="email", id="email", name="email"><br/>
+         <label class="subheader" for="password">Password</label>
+         <br/>
+        <input type="password", id="password", name="password"><br/>
+       <div class="divider"></div>
+      <!-- <p><a href="/signup">Or sign up if you don't have an account</a></p> -->
       </div>
     </div>
+
+    <div class="row">
+      <div class="col">
+<input class="button240" type="submit" value="GO" />
+      </div>
+      </form>
+      <div class="col">
+<a href="/signup"><input class="button240" type="submit" value="Sign Up">
+     </a>
+
+      </div>
+
+
+    </div>
+     
+
+     
+      
+
+</div>    
+
    <%- include('footer')%> 

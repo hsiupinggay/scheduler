@@ -1,44 +1,52 @@
-<%- include('header', { title: "gantt"})%> 
+<%- include('header', { title: "gantt"})%>
 
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script type="text/javascript">
-    google.charts.load('current', {'packages':['gantt']});
-    google.charts.setOnLoadCallback(drawChart);
-    const eventsData = <%-JSON.stringify(events)%>
-    console.log(eventsData)
-    eventsData.forEach(e =>{
-      e[3] = new Date(e[3]);
-    })
+<script
+  type="text/javascript"
+  src="https://www.gstatic.com/charts/loader.js"
+></script>
+<script type="text/javascript">
+  google.charts.load('current', {'packages':['gantt']});
+  google.charts.setOnLoadCallback(drawChart);
+  const eventsData = <%-JSON.stringify(events)%>
+  console.log(eventsData)
+  eventsData.forEach(e =>{
+    e[3] = new Date(e[3]);
+  })
 
-    function daysToMilliseconds(days) {
-      return days * 24 * 60 * 60 * 1000;
-    }
+  function daysToMilliseconds(days) {
+    return days * 24 * 60 * 60 * 1000;
+  }
 
-    function drawChart() {
+  function drawChart() {
 
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Task ID');
-      data.addColumn('string', 'Task Name');
-      data.addColumn('string', 'Resource');
-      data.addColumn('date', 'Start Date');
-      data.addColumn('date', 'End Date');
-      data.addColumn('number', 'Duration');
-      data.addColumn('number', 'Percent Complete');
-      data.addColumn('string', 'Dependencies');
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Task ID');
+    data.addColumn('string', 'Task Name');
+    data.addColumn('string', 'Resource');
+    data.addColumn('date', 'Start Date');
+    data.addColumn('date', 'End Date');
+    data.addColumn('number', 'Duration');
+    data.addColumn('number', 'Percent Complete');
+    data.addColumn('string', 'Dependencies');
 
-      data.addRows(eventsData);
+    data.addRows(eventsData);
 
-      var options = {
-        height: 1000
-        }
-      
-
-      var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
-
-      chart.draw(data, options);
-    }
-  </script>
+    var options = {
+      height: 1000
+      }
 
 
-  <div id="chart_div"></div>
-   <%- include('footer')%> 
+    var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+    chart.draw(data, options);
+  }
+</script>
+<div class="container justify-content-center">
+  <div class="container">
+    <h1>Gantt Chart</h1>
+    <p>Best viewed on desktop</p>
+  </div>
+  <div><br /></div>
+</div>
+<div id="chart_div"></div>
+<%- include('footer')%>

@@ -1,103 +1,159 @@
 <%- include('header', { title: "add schedule"})%>
-<div class="container ">
+<div class="container">
   <div class="container">
-<h1>Add Schedule</h1>
-</div>
-
-<form action="/add-schedule" method='GET'>
-  <div class="container head-info-container">
-    <label for="buyer">Buyer</label><br />
-      <select name="buyer_id">
-        <% buyerList.forEach(e =>{%>
-        <option value="<%=e.id%>"><%=e.buyer_name%></option>
-        <%}); %>
-      </select> 
-      <input type="submit" value="GO" />
+    <h1>Add Schedule</h1>
   </div>
+
+  <form action="/add-schedule" method="GET">
   
-    <% if (poList !== undefined) { %>
       <div class="container head-info-container">
-    <label for="po">Client PO No.</label><br/>
+        <label class="subheader" for="buyer">Buyer</label><br />
+        <select name="buyer_id">
+          <% buyerList.forEach(e =>{%>
+          <option value="<%=e.id%>"><%=e.buyer_name%></option>
+          <%}); %>
+          
+        </select>
+        <input type="submit" value="GO" />
+      </div>
+   
+
+    <% if (poList !== undefined) { %>
+    <div class="container head-info-container">
+      <label class="subheader" for="po">Client PO No.</label><br />
       <select name="client_po_no">
         <% poList.forEach(e =>{%>
         <option value="<%=e.client_po_no%>"><%=e.client_po_no%></option>
         <%}); %>
-      </select> 
+      </select>
       <input type="submit" value="GO" />
-       <%}; %>
+      <%}; %>
     </form>
-   </div>
- <% if (data !== undefined) { %>
-<form action="/add-schedule" method='POST'>
-<input type="hidden" name="client_po_no" value="<%=data[0].client_po_no%>">
-<div class="container head-info-container">
-  <label for="shipment_date">Shipment Date</label>
- <p><%=data[0].shipment_date%></p>
- <input type="hidden" name="shipment_date" value="<%=data[0].shipment_date%>">
- </div>
- <div class="container head-info-container">
- <label for="production_start">Production Start Date</label>
- <input name="production_start" type="date">
- </div>
-<div class="container head-info-container">
- <label for="production_end">Production End Date</label>
- <input name="production_end" type="date">
- </div>
-<div class="scroll-table">
-<table>
-<tr>
-<!-- <th>PO. No.</th>
+    </div>
+    
+    <% if (data !== undefined) { %>
+    <form action="/add-schedule" method="POST">
+      <input
+        type="hidden"
+        name="client_po_no"
+        value="<%=data[0].client_po_no%>"
+      />
+      <div class="container head-info-container">
+        <label class="subheader" for="shipment_date">Shipment Date</label>
+        <p><%=data[0].shipment_date%></p>
+        <input
+          type="hidden"
+          name="shipment_date"
+          value="<%=data[0].shipment_date%>"
+        />
+      </div>
+      <div class="container head-info-container">
+        <label class="subheader" for="production_start"
+          >Production Start Date</label
+        >
+        <input name="production_start" type="date" />
+      </div>
+      <div class="container head-info-container">
+        <label class="subheader" for="production_end"
+          >Production End Date</label
+        >
+        <input name="production_end" type="date" />
+      </div>
+      <div class="scroll-table">
+        <table>
+          <tr>
+            <!-- <th>PO. No.</th>
 <th>Shipment Date</th> -->
-<th rowspan="2">Description</th>
-<th rowspan="2">Quantity</th>
-<th colspan="2">Welding</th>
-<th colspan="2">Polishing</th>
-<th colspan="2">Weaving</th>
+            <th rowspan="2">Description</th>
+            <th rowspan="2">Quantity</th>
+            <th colspan="2">Welding</th>
+            <th colspan="2">Polishing</th>
+            <th colspan="2">Weaving</th>
+          </tr>
+          <tr>
+            <th>Days Estimated</th>
+            <th><label for="weld_start">Start On</label></th>
+            <th>Days Estimated</th>
+            <th><label for="polish_start">Start On</label></th>
+            <th>Days Estimated</th>
+            <th><label for="weave_start">Start On</label></th>
+          </tr>
+
+          <%data.forEach(e=>{%>
+          <tr>
+            <td>
+              <input
+                type="hidden"
+                name="order_id"
+                value="<%=e.order_id%>"
+              /><input
+                type="hidden"
+                name="description"
+                value="<%=e.description%>"
+              /><input
+                type="hidden"
+                name="product_id"
+                value="<%=e.product_id%>"
+              /><%=e.description%>
+            </td>
+            <td><%=e.quantity%></td>
+            <td>
+              <%=Math.ceil(e.weld_counter * e.quantity/10)%>
+              <input
+                type="hidden"
+                name="weld_period_days"
+                value="<%=Math.ceil(e.weld_counter * e.quantity/10)%>"
+              />
+            </td>
+            <td>
+              <input
+                class="schedule-table-date-input"
+                name="weld_start"
+                type="date"
+              />
+            </td>
+            <td>
+              <%=Math.ceil(e.polish_counter * e.quantity/10)%>
+              <input
+                type="hidden"
+                name="polish_period_days"
+                value="<%=Math.ceil(e.polish_counter * e.quantity/10)%>"
+              />
+            </td>
+            <td>
+              <input
+                class="schedule-table-date-input"
+                name="polish_start"
+                type="date"
+              />
+            </td>
+            <td>
+              <%=Math.ceil(e.weave_counter * e.quantity/20)%>
+              <input
+                type="hidden"
+                name="weave_period_days"
+                value="<%=Math.ceil(e.weave_counter * e.quantity/20)%>"
+              />
+            </td>
+            <td>
+              <input
+                class="schedule-table-date-input"
+                name="weave_start"
+                type="date"
+              />
+            </td>
+          </tr>
+          <%})%>
+        </table>
+      </div>
+
+      <input class="button240" type="submit" value="GO" />
+    </form>
 
 
-</tr>
-<tr>
-  <th>Days Estimated</th>
-  <th><label for="weld_start">Start On</label></th>
-  <th>Days Estimated</th>
-  <th><label for="polish_start">Start On</label></th>
-  <th>Days Estimated</th>
-  <th><label for="weave_start">Start On</label></th>
-</tr>
-
-<%data.forEach(e=>{%>
-  <tr>
- 
-  <td><input type="hidden" name="order_id" value="<%=e.order_id%>"><input type="hidden" name="description" value="<%=e.description%>"><input type="hidden" name="product_id" value="<%=e.product_id%>"><%=e.description%></td>
-  <td><%=e.quantity%></td>
-  <td>
-    <%=Math.ceil(e.weld_counter * e.quantity/10)%>
-    <input type="hidden" name="weld_period_days" value="<%=Math.ceil(e.weld_counter * e.quantity/10)%>">
-  </td>
-  <td>
-    <input name="weld_start" type="date">
-  </td>
-  <td>
-    <%=Math.ceil(e.polish_counter * e.quantity/10)%>
-    <input type="hidden" name="polish_period_days" value="<%=Math.ceil(e.polish_counter * e.quantity/10)%>">
-  </td>
-  <td><input name="polish_start" type="date"></td>
-  <td>
-    <%=Math.ceil(e.weave_counter * e.quantity/20)%>
-    <input type="hidden" name="weave_period_days" value="<%=Math.ceil(e.weave_counter * e.quantity/20)%>">
-  </td>
-  <td><input name="weave_start" type="date"></td>
-
-</tr>
-<%})%>
-
-</table>
-</div>
   
-<input class="button240" type="submit" value="GO"/>
-</form>
 
 </div>
- <%}; %>
 
-<%- include('footer')%>
+
+  <%}; %> <%- include('footer')%>

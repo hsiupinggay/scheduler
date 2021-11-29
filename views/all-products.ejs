@@ -9,23 +9,48 @@
       <label for="buyer">Buyer</label><br />
       <select name="buyer_id">
         <% buyerList.forEach(e =>{%>
-        <option value="<%=e.id%>"><%=e.buyer_name%></option>
+        <option value="<%=e.id%>" id="<%=e.id%>"><%=e.buyer_name%></option>
         <%}); %>
+        <option value="none" selected disabled hidden>Select Buyer</option>
       </select>
       <input type="submit" value="GO" />
     </form>
   </div>
+  <div class="container head-info-container">
+    <table>
+      
+        <%allProducts.forEach(product=>{%>
+          <tr>
+       
+        <td><%=product.description%></td>
+        <td><a href="/products/<%=product.id%>"><i class="fas fa-eye"></i></a></td>
+        <td><form action="/products/<%=product.id%>/edit?_method=PUT">
+        <button type=submit><i class="far fa-edit"></i></button>
+      </form></td>
+      <td><form action="/products/<%=product.id%>/delete?_method=DELETE" method="POST">
+      <button type=submit><i class="fas fa-trash-alt"></i></i></button>
+      </form></td>
+ 
 
-  <%allProducts.forEach(product=>{%>
-  <a href="/products/<%=product.id%>">
-    <div class="container head-info-container">
-      <label class="product-id" for="product_id">ID <%=product.id%></label>
-      <br />
-      <label for="description">Description</label><br />
-      <p><%=product.description%></p>
-    </div></a
-  >
-  <%})%>
+        </tr>
+<%})%>
+
+      </table>
+      
 </div>
 
+<script>
+  // selects buyer dropdown option to reflect database information for current product page
+console.log('script running')
+const productObj = <%-JSON.stringify(allProducts[0])%>;
+console.log(productObj)
+const currentBuyer = productObj.buyer_id
+console.log(currentBuyer)
+
+const selectCurrentBuyer = () => {document.getElementById(`${currentBuyer}`).selected = 'true';
+}
+selectCurrentBuyer()
+</script>
+
 <%- include('footer')%>
+

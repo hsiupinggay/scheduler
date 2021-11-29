@@ -1,54 +1,66 @@
 <%- include('header', { title: "input products"})%>
 <div class="container justify-content-center">
-  <div class="container justify-content-center">
+  <div class="container">
     <h1>Add Product</h1>
   </div>
-  <div class="container justify-content-center head-info-container">
+  <div class="container">
     <form action="/input-product" method="POST">
-      <label for="description">Description:</label><br />
-      <input
-        type="text"
-        id="description"
-        name="description"
-        value="e.g. marty lounge chair"
-      />
+      <div class="container head-info-container">
+        <div class="row">
+          <div class="col-md-6 col-sm-12">
+            <label class="subheader" for="description">Description</label>
+            <br />
+            <input
+              type="text"
+              id="description"
+              name="description"
+              value="e.g. marty lounge chair"
+            />
+            <div><br /></div>
+            <label class="subheader" for="buyer">Buyer</label><br />
+            <select name="buyer_id">
+              <% buyerList.forEach(e=>{%>
+              <option value="<%=e.id%>"><%=e.buyer_name%></option>
+              <%})%>
+              <option value="none" selected disabled hidden>
+                Select Buyer
+              </option>
+            </select>
+          </div>
+          <div class="col-md-6 col-sm-12">
+            <label class="subheader" for="weld_counter">Weld Counter</label
+            ><br />
+            <input
+              type="integer"
+              id="weld_counter"
+              name="weld_counter"
+              value="e.g. 0.1"
+            /><br />
 
-      <div><br /></div>
+            <label class="subheader" for="polish_counter">Polish Counter</label
+            ><br />
+            <input
+              type="integer"
+              id="polish_counter"
+              name="polish_counter"
+              value="e.g. 0.1"
+            /><br />
 
-      <label for="buyer">Buyer:</label><br />
-      <select name="buyer_id">
-        <% buyerList.forEach(e=>{%>
-        <option value="<%=e.id%>"><%=e.buyer_name%></option>
-        <%})%>
-      </select>
-      <div><br /></div>
-
-      <label for="weld_counter">Weld Counter</label><br />
-      <input
-        type="integer"
-        id="weld_counter"
-        name="weld_counter"
-        value="e.g. 0.1"
-      /><br />
-
-      <label for="polish_counter">Polish Counter</label><br />
-      <input
-        type="integer"
-        id="polish_counter"
-        name="polish_counter"
-        value="e.g. 0.1"
-      /><br />
-
-      <label for="weave_counter">Weave Counter</label><br />
-      <input
-        type="integer"
-        id="weave_counter"
-        name="weave_counter"
-        value="e.g. 0.1"
-      />
-      <div><br /></div>
-
-      <input class="button240" type="submit" value="GO" />
+            <label class="subheader" for="weave_counter">Weave Counter</label
+            ><br />
+            <input
+              type="integer"
+              id="weave_counter"
+              name="weave_counter"
+              value="e.g. 0.1"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- button -->
+      <div class="container justify-content-center">
+        <input class="button240" type="submit" value="GO" />
+      </div>
     </form>
   </div>
 </div>

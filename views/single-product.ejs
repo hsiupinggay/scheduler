@@ -1,34 +1,39 @@
 <%- include('header', { title: "all products"})%>
-<h1 class="container justify-content-center form-container">
-  Product
-</h1>
-<div class="container justify-content-center form-container">
-  <div class="entry-single">
-      
-    
-      <p>Product ID: <%=data[0].id%></p>
-      <p>Description: <%=data[0].description%></p>
-      <p>Buyer: <%=data[0].buyer_name%></p>
-      <p>Weld counter: <%=data[0].weld_counter%></p>
-      <p>Polish counter: <%=data[0].polish_counter%></p>
-      <p>Weave counter: <%=data[0].weave_counter%></p>
-       
-      <div class="container">
-      <form action="/products/<%=data[0].id%>/edit?_method=PUT">
-      <input type="submit" value="Edit" />
-      </form>
-      <div class="container">
-      <form action="/products/<%=data[0].id%>/delete?_method=DELETE" method="POST">
-      <input type="submit" value="Delete" />
-      </form>
+<h1 class="container justify-content-center form-container">Product</h1>
+<div class="container justify-content-center">
+  <div class="container head-info-container">
+    <div class="row">
+      <div class="col-md-6 col-sm-12">
+        <label class="subheader">Product ID</label>
+        <p><%=data[0].id%></p>
+        <label class="subheader">Description</label>
+        <p><%=data[0].description%></p>
       </div>
-
-
-
-   
+      <div class="col-md-6 col-sm-12">
+        <label class="subheader">Weld Counter</label>
+        <p><%=data[0].weld_counter%></p>
+        <label class="subheader">Polish Counter</label>
+        <p><%=data[0].polish_counter%></p>
+        <label class="subheader">Weave Counter</label>
+        <p><%=data[0].weave_counter%></p>
+      </div>
+    </div>
   </div>
+  <div class="row">
+    <div class="col">
+    <form action="/products/<%=data[0].id%>/edit?_method=PUT">
+      <input class="button240" type="submit" value="Edit" />
+      </div>
+    </form>
+    <div class="col">
+      <form
+        action="/products/<%=data[0].id%>/delete?_method=DELETE"
+        method="POST"
+      >
+        <input class="button240" type="submit" value="Delete" />
+      </form>
+    </div>
+  </div>
+
+  <%- include('footer')%>
 </div>
-<%- include('footer')%>
-
-
-

@@ -5,6 +5,7 @@ import jsSHA from 'jssha';
 import { render } from 'ejs';
 import {
   deleteProduct,
+  logout,
   postLogin,
   postPo, postProductForm, postSchedule, postSignup, putEditedProduct, renderAddSchedule, renderCalendar, renderGanttChart, renderLogin, renderPoForm, renderProductEditForm, renderProductForm, renderProductList, renderSignup, renderSingleProduct, renderSubmission, SALT,
 } from './routes.js';
@@ -90,6 +91,7 @@ app.get('/signup', renderSignup);
 app.post('/signup', postSignup);
 app.get('/login', renderLogin);
 app.post('/login', postLogin);
+app.get('/logout', logout);
 
 // >>>>> common <<<<< //
 
