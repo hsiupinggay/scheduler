@@ -38,6 +38,10 @@ tr:nth-child(even) {
   max-width: 600px;
 }
 
+.login-container {
+  max-width: 320px;
+}
+
 /* select {
   height: 30px;
   padding: 2px;

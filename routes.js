@@ -294,6 +294,7 @@ export const postSchedule = (request, response) => {
     }
     newData.push(newObj);
   }
+  console.log('newData');
   console.log(newData);
   pool
     .query(sqlQueryOrderOverview, orderOverviewInput)
@@ -496,4 +497,8 @@ export const logout = (request, response) => {
   response.clearCookie('loggedInHash');
   response.clearCookie('userId');
   response.render('logout');
+};
+
+export const testing = (request, response) => {
+  response.render('test');
 };

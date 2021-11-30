@@ -1,39 +1,31 @@
-<%- include('header', { title: "login"})%> 
-<div class="container justify-content-center">
-
-  <div><h1>Log in</i></h1></div>
-    <div class="container head-info-container">
-      <div class="entry">
+<%- include('header', { title: "login"})%>
+<div class="container">
+  <div class="card container head-info-container login-container">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="true" href="#">Log In</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/signup" tabindex="-1" aria-disabled="true"
+            >Sign Up</a
+          >
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Log In</h5>
       <form action="/login" method="POST">
         <label class="subheader" for="email">Email</label>
-        <br/>
-        <input type="email", id="email", name="email"><br/>
-         <label class="subheader" for="password">Password</label>
-         <br/>
-        <input type="password", id="password", name="password"><br/>
-       <div class="divider"></div>
-      <!-- <p><a href="/signup">Or sign up if you don't have an account</a></p> -->
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-<input class="button240" type="submit" value="GO" />
-      </div>
+        <br />
+        <input type="email" , id="email" , name="email" /><br />
+        <label class="subheader" for="password">Password</label>
+        <br />
+        <input type="password" , id="password" , name="password" /><br />
+        <div><br /></div>
+        <input class="button240" type="submit" value="GO" />
       </form>
-      <div class="col">
-<a href="/signup"><input class="button240" type="submit" value="Sign Up">
-     </a>
-
-      </div>
-
-
     </div>
-     
-
-     
-      
-
-</div>    
-
-   <%- include('footer')%> 
+  </div>
+</div>
+<%- include('footer')%>

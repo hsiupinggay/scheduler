@@ -7,7 +7,7 @@ import {
   deleteProduct,
   logout,
   postLogin,
-  postPo, postProductForm, postSchedule, postSignup, putEditedProduct, renderAddSchedule, renderCalendar, renderGanttChart, renderLogin, renderPoForm, renderProductEditForm, renderProductForm, renderProductList, renderSignup, renderSingleProduct, renderSubmission, SALT,
+  postPo, postProductForm, postSchedule, postSignup, putEditedProduct, renderAddSchedule, renderCalendar, renderGanttChart, renderLogin, renderPoForm, renderProductEditForm, renderProductForm, renderProductList, renderSignup, renderSingleProduct, renderSubmission, SALT, testing,
 } from './routes.js';
 
 const app = express();
@@ -97,5 +97,6 @@ app.get('/logout', logout);
 
 // render changes page after all submissions
 app.get('/submitted', renderSubmission);
+app.get('/test', testing);
 
 app.listen(3004);
