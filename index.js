@@ -10,6 +10,7 @@ import {
   postPo, postProductForm, postSchedule, postSignup, putEditedProduct, renderAddSchedule, renderCalendar, renderGanttChart, renderLogin, renderPoForm, renderProductEditForm, renderProductForm, renderProductList, renderSignup, renderSingleProduct, renderSubmission, SALT, testing,
 } from './routes.js';
 
+const PORT = process.env.PORT || 3004;
 const app = express();
 app.set('view engine', 'ejs');
 app.use(cookieParser());
@@ -97,6 +98,5 @@ app.get('/logout', logout);
 
 // render changes page after all submissions
 app.get('/submitted', renderSubmission);
-app.get('/test', testing);
 
-app.listen(3004);
+app.listen(PORT);

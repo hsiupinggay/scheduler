@@ -498,7 +498,3 @@ export const logout = (request, response) => {
   response.clearCookie('userId');
   response.render('logout');
 };
-
-export const testing = (request, response) => {
-  response.render('test');
-};
