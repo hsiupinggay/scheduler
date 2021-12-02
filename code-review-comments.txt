@@ -1,0 +1,20 @@
+Code Review Comments from Michelle and Mike
+
+Good points
+- presentation was awesome
+- good use of APIs (calendar, google gantt chart)
+- index.js - good comments, clean organization. nothing weird. :D 
+- css is beautiful.
+
+Points to improve
+- update your README.md (it still says Rocket Academy Coding Bootcamp: Base Node App)
+- very long functions need to be commented more, e.g. renderAddSchedule.
+- // this loop is what I'm proudest of in this whole project.
+  - good to also say how it works in the comments.
+- routes.js  
+  - lines 143-150, look very similar to 164-161. Could this be refactored into a function?
+- gantt-chart.ejs
+  - it's weird that the script for drawing the gantt, is above the html... we think maybe it should be below.
+- calendar.ejs
+  - lines 22, and 23 contain /head and body tags. but these are already in the header and footer... something weird here. 
+  
